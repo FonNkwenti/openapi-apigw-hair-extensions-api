@@ -1,0 +1,267 @@
+openapi: "3.0.1"
+info:
+  title: "Human Hair Extensions dev- OpenAPI 3.0"
+  description: "This is a simple human hair extensions API for a fictitious online\
+    \ hair extensions ecommerce site called Eposi Hair Extensions."
+  version: "1.0.11"
+servers:
+- url: "https://${HairExtensionsAPI}.execute-api.us-west-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "dev"
+paths:
+  /extensions:
+    get:
+      operationId: "listExtensions"
+      responses:
+        "404":
+          description: "404 response"
+          content: {}
+        "405":
+          description: "405 response"
+          content: {}
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/extensions"
+      security:
+      - api_key: []
+      x-amazon-apigateway-request-validator: "Validate body"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        credentials:
+          Fn::GetAtt: [LambdaExecutionRole, Arn]
+        uri: 
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-1:404148889442:function:listExtensions/invocations"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+    post:
+      operationId: "addExtension"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/extension"
+        required: true
+      responses:
+        "405":
+          description: "405 response"
+          content: {}
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/extension"
+      security:
+      - api_key: []
+      x-amazon-apigateway-request-validator: "Validate body"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        credentials:
+          Fn::GetAtt: [LambdaExecutionRole, Arn]       
+        uri: 
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-1:404148889442:function:createExtension/invocations"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+  /extensions/{extensionId}:
+    get:
+      operationId: "getExtensionById"
+      parameters:
+      - name: "extensionId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "400":
+          description: "400 response"
+          content: {}
+        "404":
+          description: "404 response"
+          content: {}
+        "200":
+          description: "200 response"
+          content: {}
+      security:
+      - api_key: []
+      x-amazon-apigateway-request-validator: "Validate query string parameters and\
+        \ headers"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        credentials:
+          Fn::GetAtt: [LambdaExecutionRole, Arn]
+        uri: 
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-1:404148889442:function:getExtension/invocations"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+    put:
+      operationId: "updateExtensions"
+      parameters:
+      - name: "extensionId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/extension"
+        required: true
+      responses:
+        "404":
+          description: "404 response"
+          content: {}
+        "405":
+          description: "405 response"
+          content: {}
+        "200":
+          description: "200 response"
+          content: {}
+        "400":
+          description: "400 response"
+          content: {}
+      security:
+      - api_key: []
+      x-amazon-apigateway-request-validator: "Validate body, query string parameters,\
+        \ and headers"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        credentials:
+          Fn::GetAtt: [LambdaExecutionRole, Arn]
+        uri: 
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-1:404148889442:function:updateExtension/invocations"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+    delete:
+      operationId: "deleteExtension"
+      parameters:
+      - name: "extensionId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "400":
+          description: "400 response"
+          content: {}
+        "204":
+          description: "204 response"
+          content: {}
+      security:
+      - api_key: []
+      x-amazon-apigateway-request-validator: "Validate query string parameters and\
+        \ headers"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        credentials:
+          Fn::GetAtt: [LambdaExecutionRole, Arn]
+        uri: 
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-1:404148889442:function:deleteExtension/invocations"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+components:
+  schemas:
+    extension:
+      required:
+      - "availability"
+      - "colour"
+      - "curl"
+      - "origin"
+      - "price"
+      - "type"
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        curl:
+          type: "string"
+          description: "curl type"
+          enum:
+          - "straight"
+          - "wavy"
+          - "curly"
+          - "coily"
+        length:
+          maximum: 60
+          minimum: 1
+          type: "integer"
+          description: "Lenght of the hair in centimeters"
+          format: "int32"
+        price:
+          type: "number"
+          description: "how much the hair cost in FCFA"
+        colour:
+          type: "string"
+          description: "colour of the hair"
+        origin:
+          type: "string"
+          description: "Country where the hair is coming from"
+        instructions:
+          type: "string"
+          description: "Hair extension care instructions"
+        type:
+          type: "string"
+          description: "type of hair"
+          enum:
+          - "virgin"
+          - "remy"
+          - "synthethic"
+        availability:
+          type: "string"
+          description: "extension availability in the store or warehouse"
+          enum:
+          - "available"
+          - "pending"
+          - "sold"
+        application:
+          type: "string"
+          description: "how the hair extension is applied"
+          enum:
+          - "clip-in"
+          - "sew-in"
+          - "fusion"
+          - "micro-link"
+    extensions:
+      type: "array"
+      items:
+        $ref: "#/components/schemas/extension"
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "x-api-key"
+      in: "header"
+x-amazon-apigateway-request-validators:
+  Validate body:
+    validateRequestParameters: false
+    validateRequestBody: true
+  Validate body, query string parameters, and headers:
+    validateRequestParameters: true
+    validateRequestBody: true
+  Validate query string parameters and headers:
+    validateRequestParameters: true
+    validateRequestBody: false
