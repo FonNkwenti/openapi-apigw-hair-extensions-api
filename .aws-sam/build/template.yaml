@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: hair-extensions
+Transform:
+- AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    MethodSettings:
+    - ResourcePath: /*
+      HttpMethod: '*'
+      DataTraceEnabled: true
+      LoggingLevel: INFO
+      MetricsEnabled: true
+  Function:
+    Runtime: nodejs18.x
+    Architectures:
+    - x86_64
+    MemorySize: 128
+    Timeout: 100
+Resources:
+  HairExtensionsAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      OpenApiVersion: 3.0.3
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ../../hair-extension-api.yaml
+      EndpointConfiguration:
+        Type: REGIONAL
+  listExtensionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/listExtensions
+      Description: Return a list of all hair extensions
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: HairExtensionTable
+      Environment:
+        Variables:
+          DYNAMODB_TABLE:
+            Ref: HairExtensionTable
+      CodeUri: listExtensionsFunction
+    Metadata:
+      SamResourceId: listExtensionsFunction
+  getExtensionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/getExtension
+      Description: Return a hair extension Item
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: HairExtensionTable
+      Environment:
+        Variables:
+          DYNAMODB_TABLE:
+            Ref: HairExtensionTable
+      CodeUri: getExtensionFunction
+    Metadata:
+      SamResourceId: getExtensionFunction
+  createExtensionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/createExtension
+      Runtime: nodejs18.x
+      MemorySize: 128
+      Timeout: 100
+      Description: Create a hair extension Item
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: HairExtensionTable
+      Environment:
+        Variables:
+          DYNAMODB_TABLE:
+            Ref: HairExtensionTable
+      CodeUri: createExtensionFunction
+    Metadata:
+      SamResourceId: createExtensionFunction
+  HairExtensionTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: extensionId
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - apigateway.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: AllowLambdaExec
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: lambda:InvokeFunction
+            Resource: '*'
+Outputs:
+  WebEndpoint:
+    Description: API Gateway endpoint URL for Prod stage
+    Value:
+      Fn::Sub: https://${HairExtensionsAPI}.execute-api.${AWS::Region}.amazonaws.com/dev/
