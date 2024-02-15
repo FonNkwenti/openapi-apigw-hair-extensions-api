@@ -20,7 +20,7 @@ The Hair Extensions API is a RESTful API that allows users to manage and retriev
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/your-username/hair-extensions-api.git
+   git clone https://github.com/FonNkwenti/openapi-apigw-hair-extensions-api.git
    ```
 
 2. Install the dependencies:
@@ -59,8 +59,10 @@ For detailed information on how to use the Hair Extensions API, refer to the [AP
 
 - `src/` - Contains the source code for the Lambda functions.
 - `events/` - Contains sample event payloads for local testing.
+- `__tests__/` - Contains unit tests.
 - `template.yaml` - AWS SAM template defining the infrastructure resources.
-- `README.md` - This file, providing an overview of the project.
+- `hair-extension-api.yaml` - Contains OpenAPI v3 definition for the Hair Extensions API.
+
 
 ## Contributing
 
